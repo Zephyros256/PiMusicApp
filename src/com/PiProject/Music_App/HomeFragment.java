@@ -1,6 +1,6 @@
 package com.PiProject.Music_App;
 
-/** TODO rename file when destination is made **/
+/** TODO bestand eventueel hernoemen wanneer functie bepaald is **/
 
 import android.view.View;
 
@@ -17,7 +17,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        /** TODO layout referentie updaten indien bestand etc. hernoemd is **/
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
         return rootView;

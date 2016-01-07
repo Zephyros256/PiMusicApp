@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
         // adding nav drawer items to array
-        // TODO alter comments for reference when altered
+        // TODO comments aanpassen naar de functie het element eronder
         // Home
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
         // Photos
@@ -126,7 +126,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    //TODO fix reference in function
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -140,7 +139,6 @@ public class MainActivity extends Activity {
             return true;
         }
         // Handle action bar actions click
-        // TODO sort out action_settings
         switch (item.getItemId()) {
             case R.id.action_settings:
                 return true;
@@ -152,7 +150,6 @@ public class MainActivity extends Activity {
     /***
      * Called when invalidateOptionsMenu() is triggered
      */
-    //TODO sort out action_settings (same as the other one)
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
@@ -171,7 +168,7 @@ public class MainActivity extends Activity {
             case 0:
                 fragment = new HomeFragment();
                 break;
-            // TODO uncomment cases when fragments have been added(and rename them accordingly)
+            // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig)
             /*
             case 1:
                 fragment = new FindPeopleFragment();

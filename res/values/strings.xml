@@ -6,16 +6,17 @@
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
 
-    <!-- Nav Drawer Menu Items TODO rename array according to functions-->
+    <!-- Nav Drawer Menu Items TODO array items hernoemen naar hun uiteindelijke functie-->
     <string-array name="nav_drawer_items">
         <item >Home</item>
-        <item >Photos</item> <!-- TODO add .java and .xml files for each entry -->
+        <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
+        <item >Photos</item>
         <item >Communities</item>
         <item >Pages</item>
         <item >What\'s Hot</item>
     </string-array>
 
-    <!-- Nav Drawer List Item Icons TODO add icons -->
+    <!-- Nav Drawer List Item Icons TODO iconen toevoegen -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
         <item>@drawable/ic_placeholder</item>
