@@ -10,7 +10,7 @@
     <string-array name="nav_drawer_items">
         <item >Home</item>
         <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
-        <item >Photos</item>
+        <item >Music</item>
         <item >Communities</item>
         <item >Pages</item>
         <item >What\'s Hot</item>

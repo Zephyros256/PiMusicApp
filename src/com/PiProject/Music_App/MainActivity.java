@@ -51,8 +51,7 @@ public class MainActivity extends Activity {
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
         // nav drawer icons from resources
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);
+        navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
@@ -63,14 +62,14 @@ public class MainActivity extends Activity {
         // TODO comments aanpassen naar de functie het element eronder
         // Home
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        // Photos
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(1, -1)));
+        // Music
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
         // Communities, Will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(2, -1), true, "22"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, "22"));
         // Pages
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(3, -1)));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
         // What's hot, We  will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(4, -1), true, "50+"));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true, "50+"));
 
 
         // Recycle the typed array
@@ -168,21 +167,18 @@ public class MainActivity extends Activity {
             case 0:
                 fragment = new HomeFragment();
                 break;
-            // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig)
-            /*
+            // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig
             case 1:
-                fragment = new FindPeopleFragment();
+                fragment = new MusicFragment();
                 break;
+            /*
             case 2:
-                fragment = new PhotosFragment();
-                break;
-            case 3:
                 fragment = new CommunityFragment();
                 break;
-            case 4:
+            case 3:
                 fragment = new PagesFragment();
                 break;
-            case 5:
+            case 4:
                 fragment = new WhatsHotFragment();
                 break;
             */
