@@ -1,8 +1,5 @@
 package com.PiProject.Music_App.model;
 
-/**
- * Created by Robin on 28/12/2015.
- */
 public class NavDrawerItem {
 
     private String title;

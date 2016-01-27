@@ -9,8 +9,8 @@
     <!-- Nav Drawer Menu Items TODO array items hernoemen naar hun uiteindelijke functie-->
     <string-array name="nav_drawer_items">
         <item >Home</item>
-        <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
         <item >Music</item>
+        <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
         <item >Communities</item>
         <item >Pages</item>
         <item >What\'s Hot</item>
