@@ -5,13 +5,18 @@
           android:versionName="1.0">
     <uses-sdk android:minSdkVersion="21"
               android:targetSdkVersion="22" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+        <!-- TODO wellicht schermorientatie niet enkel portret-->
         <activity android:name=".MainActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:launchMode="singleTop"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- <service android:name="com.PiProject.Music_App.MusicService" -->
     </application>
 </manifest>
