@@ -9,11 +9,8 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -23,12 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-
-
 
 
 public class MainActivity extends Activity {
