@@ -121,6 +121,7 @@
     <color name="LimeGreen">#32CD32</color>
     <color name="DarkSlateGrey">#2F4F4F</color>
     <color name="SeaGreen">#2E8B57</color>
+    <color name="Nero">#262626</color>
     <color name="ForestGreen">#228B22</color>
     <color name="LightSeaGreen">#20B2AA</color>
     <color name="DodgerBlue">#1E90FF</color>
@@ -143,11 +144,11 @@
     <color name="Black">#000000</color>
 
     <!-- Custom Colours for the navigation bar -->
-    <color name="list_background">@color/Black</color>
-    <color name="list_background_start">@color/DarkGrey</color>
-    <color name="list_background_end">@color/Black</color>
-    <color name="list_background_pressed_start">@color/DarkRed</color>
-    <color name="list_background_pressed_end">@color/Red</color>
+    <color name="list_bg">@color/Black</color>
+    <color name="list_bg_start">@color/DarkGrey</color>
+    <color name="list_bg_end">@color/Black</color>
+    <color name="list_bg_pressed_start">@color/DarkRed</color>
+    <color name="list_bg_pressed_end">@color/Red</color>
     <color name="list_item_title">@color/White</color>
     <color name="list_divider">@color/DarkGrey</color>
     <color name="counter_text_color">@color/Black</color>

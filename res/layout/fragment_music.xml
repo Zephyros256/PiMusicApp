@@ -1,25 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO bestand hernoemen naar gelang de referentie in MainActivity.java & strings.xml -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:background="@color/list_bg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-    <TextView
-            android:id="@+id/txtLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="16sp"
-            android:text="Music View"/>
-
-    <!-- TODO icoon toevoegen en de "content description" van de ImageView-->
-    <ImageView android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_below="@id/txtLabel"
-               android:src="@drawable/ic_placeholder"
-               android:layout_centerHorizontal="true"
-               android:layout_marginTop="10dp"/>
 
 
 </RelativeLayout>
