@@ -5,17 +5,16 @@ import android.view.View;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-public class MusicFragment extends Fragment {
+public class MusicListFragment extends Fragment {
 
-    public MusicFragment() {}
+    public MusicListFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_music, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_music_list, container, false);
 
         return rootView;
     }
