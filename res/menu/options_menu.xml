@@ -8,9 +8,10 @@
         android:title="@string/action_settings"/>
     <item
         android:id="@+id/search"
+        android:title="@string/search_title"
         android:icon="@drawable/ic_placeholder"
-        android:orderInCategory="98"
-        android:showAsAction="never"
-        android:title="@string/search_function"/>
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView"
+        android:orderInCategory="98"/>
 
 </menu>

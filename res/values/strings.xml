@@ -5,7 +5,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open" translatable="false">Slider Menu Opened</string>
     <string name="drawer_close" translatable="false">Slider Menu Closed</string>
-    <string name="search_function">Search</string>
+
+    <!-- Search Function -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Zoek Muziek</string>
 
     <!-- Nav Drawer Menu Items TODO array items hernoemen naar hun uiteindelijke functie-->
     <string-array name="nav_drawer_items">

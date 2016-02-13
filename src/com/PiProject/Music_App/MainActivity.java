@@ -1,5 +1,6 @@
 package com.PiProject.Music_App;
 
+import android.view.MenuInflater;
 import com.PiProject.Music_App.adapter.NavDrawerListAdapter;
 import com.PiProject.Music_App.model.NavDrawerItem;
 
@@ -53,7 +54,7 @@ public class MainActivity extends Activity {
         // nav drawer icons from resources
         navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
         navDrawerItems = new ArrayList<NavDrawerItem>();
@@ -127,7 +128,9 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+
         return true;
     }
 
@@ -161,7 +164,7 @@ public class MainActivity extends Activity {
      * Diplaying fragment view for selected nav drawer list item
     **/
     private void displayView(int position) {
-        // update the main content by replacing fragments
+        // update the menu content by replacing fragments
         Fragment fragment = null;
         switch (position) {
             case 0:
