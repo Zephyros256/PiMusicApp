@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
         getActionBar().setHomeButtonEnabled(true);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                // TODO add icon for Drawer
+                // TODO icoon voor het menu toevoegen
                 R.drawable.ic_placeholder, //nav menu toggle icon
                 R.string.app_name, // nav drawer open - description for accessibility
                 R.string.app_name // nav drawer close - description for accessibility
@@ -172,7 +172,7 @@ public class MainActivity extends Activity {
                 break;
             // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig
             case 1:
-                fragment = new MusicFragment();
+                fragment = new MusicListFragment();
                 break;
             /*
             case 2:

@@ -24,10 +24,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:divider="@color/list_divider"
+            android:divider="@color/menu_divider"
             android:dividerHeight="1dp"
-            android:listSelector="@drawable/list_selector"
-            android:background="@color/list_bg"/>
+            android:listSelector="@drawable/menu_list_selector"
+            android:background="@color/menu_bg"/>
 
 </android.support.v4.widget.DrawerLayout>
 

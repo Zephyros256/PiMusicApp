@@ -16,7 +16,7 @@
             android:textStyle="bold" />
 
     <TextView
-            android:id="@+id/song_album"
+            android:id="@+id/song_artist"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF99"

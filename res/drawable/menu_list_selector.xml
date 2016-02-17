@@ -8,7 +8,7 @@
 
     <item
         android:state_pressed="true"
-        android:drawable="menu_item_bg_pressed" />
+        android:drawable="@drawable/menu_item_bg_pressed" />
 
     <item
         android:state_activated="true"

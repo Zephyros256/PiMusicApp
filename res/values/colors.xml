@@ -144,7 +144,8 @@
     <color name="Grey14">#242424</color>
     <color name="Black">#000000</color>
 
-    <!-- Custom Colours for the navigation bar -->
+    <!-- Custom Colours for the navigation bar
+    TODO kleuren van dingen naar gelang aanpassen voor gewenste stijl-->
 
     <!-- Counter colours -->
     <color name="counter_text_color">@color/Black</color>
@@ -160,6 +161,6 @@
     <color name="menu_divider">@color/DarkGrey</color>
 
     <!-- Music list colours -->
-    <color name="music_list_divider">@color/Grey14</color>
+    <color name="music_list_text">@color/LightGrey</color>
 
 </resources>
