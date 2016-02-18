@@ -1,11 +1,18 @@
 package com.PiProject.Music_App;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.view.MenuInflater;
 import com.PiProject.Music_App.adapter.NavDrawerListAdapter;
 import com.PiProject.Music_App.model.NavDrawerItem;
 
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -23,7 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 
-public class MainActivity extends Activity {
+public class    MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -229,5 +236,48 @@ public class MainActivity extends Activity {
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
+    /**
+     * Bluetooth Connectie e.d.
+     */
+    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+    if (mBluetoothAdapter == null) {
+        // Device does not support Bluetooth
+    }
+    //TODO kijken naar deze errors!
+    if(!mBluetoothAdapter.isEnabled()) {
+        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+    }
+
+    //TODO Array voor de paired devices aanmaken
+    Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+    //If there are paired devices
+    if (pairedDevices.size() > 0) {
+        // Loop through paired devices
+        for (BluetoothDevice device : pairedDevices) {
+            // Add the name and address to an array adapter to show in a ListView
+            mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        }
+    }
+
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+            }
+        }
+    };
+    // Register the BroadcastReceiver
+    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+
+    //TODO Afmaken van connectie
 
 }
