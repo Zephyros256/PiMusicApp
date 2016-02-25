@@ -249,97 +249,96 @@ public class    MainActivity extends Activity {
      */
 
     private final static int REQUEST_ENABLE_BT = 1;
-    public ArrayList mArrayAdapter = new ArrayList;
+    public ArrayList mArrayAdapter = new ArrayList[];
     BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
 
     //Check if device has bluetooth then continue to configure
     if (bluetooth == null) {
-        //TODO kijken naar deze errors!
-        if(!bluetooth.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-        }
 
-        //TODO Array voor de paired devices aanmaken
-        Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
-        //If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
+        }
+    //TODO kijken naar deze errors!
+    if(!bluetooth.isEnabled()) {
+        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+    }
+
+    //TODO Array voor de paired devices aanmaken
+    Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
+    //If there are paired devices
+    if (pairedDevices.size() > 0) {
+        // Loop through paired devices
+        for (BluetoothDevice device : pairedDevices) {
+            // Add the name and address to an array adapter to show in a ListView
+            mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+        }
+    }
+
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         }
+    };
+    // Register the BroadcastReceiver
+    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
 
-        // Create a BroadcastReceiver for ACTION_FOUND
-        private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                // When discovery finds a device
-                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                    // Get the BluetoothDevice object from the Intent
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    // Add the name and address to an array adapter to show in a ListView
-                    mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                }
-            }
-        };
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-
-        //TODO Afmaken van connectie
-        //Bluetoothconnectie
-        private Class ConnectThread extends Thread {
-            final BluetoothSocket mmSocket;
-            final BluetoothDevice mmDevice;
+    //TODO Afmaken van connectie
+    //Bluetoothconnectie
+    private Class ConnectThread extends Thread {
+        final BluetoothSocket mmSocket;
+        final BluetoothDevice mmDevice;
 
 
-            public ConnectThread(BluetoothDevice device) {
-                // Use a temporary object that is later assigned to mmSocket,
-                // because mmSocket is final
-                BluetoothSocket tmp = null;
-                mmDevice = device;
+        public ConnectThread(BluetoothDevice device) {
+            // Use a temporary object that is later assigned to mmSocket,
+            // because mmSocket is final
+            BluetoothSocket tmp = null;
+            mmDevice = device;
 
-                // Get a BluetoothSocket to connect with the given BluetoothDevice
-                try {
-                    // uuid is the app's UUID string, also used by the server code
-                    //TODO UUID string van Coen vergaren!
-                    UUID uuid = UUID.fromString("")
-                    tmp = device.createRfcommSocketToServiceRecord(uuid);
-                } catch (IOException e) { }
-                mmSocket = tmp;
-            }
-
-        public void run() {
-            // Cancel discovery because it will slow down the connection
-            bluetooth.cancelDiscovery();
-
+            // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
-                // Connect the device through the socket. This will block
-                // until it succeeds or throws an exception
-                mmSocket.connect();
-            } catch (IOException connectException) {
-                // Unable to connect; close the socket and get out
-                try {
-                    mmSocket.close();
-                } catch (IOException closeException) { }
-                return;
-            }
-
-            // Do work to manage the connection (in a separate thread)
-            manageConnectedSocket(mmSocket);
+                // uuid is the app's UUID string, also used by the server code
+                //TODO UUID string van Coen vergaren!
+                UUID uuid = UUID.fromString("")
+                tmp = device.createRfcommSocketToServiceRecord(uuid);
+            } catch (IOException e) { }
+            mmSocket = tmp;
         }
 
-        /** Will cancel an in-progress connection, and close the socket */
-        public void cancel() {
+    public void run() {
+        // Cancel discovery because it will slow down the connection
+        bluetooth.cancelDiscovery();
+
+        try {
+            // Connect the device through the socket. This will block
+            // until it succeeds or throws an exception
+            mmSocket.connect();
+        } catch (IOException connectException) {
+            // Unable to connect; close the socket and get out
             try {
                 mmSocket.close();
-            } catch (IOException e) { }
+            } catch (IOException closeException) { }
+            return;
         }
 
+        // Do work to manage the connection (in a separate thread)
+        //manageConnectedSocket(mmSocket);
+    }
 
-        }
+    /** Will cancel an in-progress connection, and close the socket */
+    public void cancel() {
+        try {
+            mmSocket.close();
+        } catch (IOException e) { }
+    }
 
     }
 
