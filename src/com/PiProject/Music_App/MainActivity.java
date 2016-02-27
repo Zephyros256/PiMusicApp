@@ -22,7 +22,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.PiProject.Music_App.adapter.NavDrawerListAdapter;
 import com.PiProject.Music_App.model.NavDrawerItem;
 
@@ -41,6 +43,9 @@ public class    MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    //Bluetooth
+    private BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -248,30 +253,44 @@ public class    MainActivity extends Activity {
      * Bluetooth Connectie e.d.
      */
 
-    private final static int REQUEST_ENABLE_BT = 1;
-    public ArrayList mArrayAdapter = new ArrayList[];
-    BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+    /** private final static int REQUEST_ENABLE_BT = 1;
+    private ArrayAdapter<String> mArrayAdapter;
+
 
     //Check if device has bluetooth then continue to configure
-    if (bluetooth == null) {
+    if (bluetooth != null) {
+        if (!bluetooth.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 
+            // status van de bluetooth laten zien
+            String status;
+            if (bluetooth.isEnabled()) {
+                String mydeviceadress = bluetooth.getAddress();
+                String mydevicename = bluetooth.getName();
+                status = mydevicename + " : " + mydeviceadress;
+            } else {
+                status = "Bluetooth is not Enabled.";
+            }
+            Toast.makeText(this, status, Toast.LENGTH_LONG).show();
         }
-    //TODO kijken naar deze errors!
-    if(!bluetooth.isEnabled()) {
-        Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+
+        Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
+        //If there are paired devices
+        if (pairedDevices.size() > 0) {
+            // Loop through paired devices
+            for (BluetoothDevice device : pairedDevices) {
+                // Add the name and address to an array adapter to show in a ListView
+               mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+            }
+        }
+
+
     }
+
 
     //TODO Array voor de paired devices aanmaken
-    Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
-    //If there are paired devices
-    if (pairedDevices.size() > 0) {
-        // Loop through paired devices
-        for (BluetoothDevice device : pairedDevices) {
-            // Add the name and address to an array adapter to show in a ListView
-            mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-        }
-    }
+
 
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -333,7 +352,7 @@ public class    MainActivity extends Activity {
         //manageConnectedSocket(mmSocket);
     }
 
-    /** Will cancel an in-progress connection, and close the socket */
+    /** Will cancel an in-progress connection, and close the socket
     public void cancel() {
         try {
             mmSocket.close();
@@ -342,7 +361,9 @@ public class    MainActivity extends Activity {
 
     }
 
-    //TODO Managing a Connection
+    //TODO Managing a Connection */
+
+
 
 
 
