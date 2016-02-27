@@ -8,7 +8,7 @@
     <!-- TODO dit voltooien en album_title toevoegen(niet per se hier)
     TODO text referenties aan geimporteerde muziekgegevens linken-->
     <TextView
-            android:id="@id/song_title"
+
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/song_text"

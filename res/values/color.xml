@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<color>
+<resources>
     <!-- Standard Colours -->
     <color name="White">#FFFFFF</color>
     <color name="Ivory">#FFFFF0</color>

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Tekstgroottes -->
-    <dimen name="standard_text_gravity">left</dimen>
+    <!-- <dimen name="standard_text_gravity">left</dimen> -->
 
     <!-- Muzieklijst tekst -->
     <dimen name="song_text">16dp</dimen>
