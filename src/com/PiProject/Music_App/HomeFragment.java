@@ -1,12 +1,13 @@
 package com.PiProject.Music_App;
 
-        import android.view.View;
+import android.app.Fragment;
+import android.view.View;
 
-        import android.app.Fragment;
-        import android.os.Bundle;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class HomeFragment extends Fragment {
 

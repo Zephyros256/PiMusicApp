@@ -1,19 +1,13 @@
 package com.PiProject.Music_App;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.app.*;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -21,31 +15,35 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
+import com.PiProject.Music_App.adapter.DeviceListAdapter;
 import com.PiProject.Music_App.adapter.NavDrawerListAdapter;
 import com.PiProject.Music_App.model.NavDrawerItem;
 
 import java.lang.String;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Set;
-import java.util.UUID;
 
 
-
-public class    MainActivity extends Activity {
+public class MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    //Bluetooth
-    private BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+    private String local_frag_tag="";
+
+    //Bluetooth buttons and stuff
+    private final static int REQUEST_ENABLE_BT = 1;
+
+    private Set<BluetoothDevice> pairedDevices;
+    private BluetoothAdapter bluetooth;
+    private DeviceListAdapter btListAdapter;
+    private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
+    private ProgressDialog mProgressDlg;
+
+    TextView BluetoothListTitle, bluetoothStatus;
+    ListView mBluetoothList;
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -67,6 +65,52 @@ public class    MainActivity extends Activity {
 
         mTitle = mDrawerTitle = getTitle();
 
+        //Bluetooth part
+        // TODO checken welke elementen behouden kunnen worden en welke niet a.d.h.v. de aan/uit dingen van OptionsFragment
+
+        bluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
+        BluetoothListTitle = (TextView)findViewById(R.id.listTitle);
+        mBluetoothList = (ListView)findViewById(R.id.bluetoothList);
+        bluetooth = BluetoothAdapter.getDefaultAdapter();
+
+        mProgressDlg = new ProgressDialog(this);
+        btListAdapter = new DeviceListAdapter(this);
+
+        mProgressDlg.setMessage("Scanning...");
+        mProgressDlg.setCancelable(false);
+        mProgressDlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                bluetooth.cancelDiscovery();
+            }
+        });
+
+        btListAdapter.setData(btDeviceList);
+        btListAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
+            @Override
+            public void onPairButtonClick(int position) {
+                BluetoothDevice device = btDeviceList.get(position);
+
+                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    unpairDevice(device);
+                } else {
+                    showToast("Pairing...");
+
+                    pairDevice(device);
+                }
+            }
+        });
+
+        IntentFilter btSearchFilter = new IntentFilter();
+
+        btSearchFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        btSearchFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        btSearchFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        btSearchFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+        registerReceiver(mReceiver, btSearchFilter);
+
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
@@ -84,8 +128,8 @@ public class    MainActivity extends Activity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
         // Music
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        // Communities, Will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, "22"));
+        // Settings - Bluetooth
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
         // Pages
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
         // What's hot, We  will add a counter here
@@ -129,14 +173,40 @@ public class    MainActivity extends Activity {
         if (savedInstanceState == null) {
             // on first time display view for first nav item
             displayView(0);
+            local_frag_tag="Home";
         }
+
+    }
+
+    @Override
+    public void onPause() {
+        if (bluetooth != null) {
+            if (bluetooth.isDiscovering()) {
+                bluetooth.cancelDiscovery();
+            }
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(mReceiver);
+
+        super.onDestroy();
+    }
+
+    /**
+     * Standard Toast constructor
+     */
+    private void showToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Slide menu item click listener
     **/
-    private class SlideMenuClickListener implements
-            ListView.OnItemClickListener {
+    private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
@@ -148,7 +218,7 @@ public class    MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
+        inflater.inflate(R.menu.main_options_menu, menu);
 
         return true;
     }
@@ -159,13 +229,7 @@ public class    MainActivity extends Activity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        // Handle action bar actions click
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        return false;
     }
 
     /***
@@ -175,7 +239,7 @@ public class    MainActivity extends Activity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         // if nav drawer is opened, hide the action items
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        //menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -188,15 +252,18 @@ public class    MainActivity extends Activity {
         switch (position) {
             case 0:
                 fragment = new HomeFragment();
+                local_frag_tag = "Home";
                 break;
-            // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig
+            // TODO uncomment cases wanneer de referentie ervoor aangemaakt is(ook de refentie hernoemen indien nodig)
             case 1:
                 fragment = new MusicListFragment();
+                local_frag_tag = "MusicList";
+                break;
+            case 2:
+                fragment = new OptionsFragment();
+                local_frag_tag = "Options";
                 break;
             /*
-            case 2:
-                fragment = new CommunityFragment();
-                break;
             case 3:
                 fragment = new PagesFragment();
                 break;
@@ -208,10 +275,23 @@ public class    MainActivity extends Activity {
                 break;
         }
 
+
+        //Fragment constructor with tags created by the switch
         if (fragment != null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.frame_container, fragment).commit();
+            FragmentManager fragManager= getFragmentManager();
+            FragmentTransaction fragTransaction =fragManager.beginTransaction();
+            if (local_frag_tag == "Home") {
+                fragTransaction.replace(R.id.frame_container, fragment, "frag_home");
+                fragTransaction.commit();
+            }
+            else if (local_frag_tag == "MusicList") {
+                fragTransaction.replace(R.id.frame_container, fragment, "frag_mlist");
+                fragTransaction.commit();
+            }
+            else if (local_frag_tag == "Options") {
+                fragTransaction.replace(R.id.frame_container, fragment, "frag_options");
+                fragTransaction.commit();
+            }
 
             // update selected item and title, then close the drawer
             mDrawerList.setItemChecked(position, true);
@@ -253,119 +333,115 @@ public class    MainActivity extends Activity {
      * Bluetooth Connectie e.d.
      */
 
-    /** private final static int REQUEST_ENABLE_BT = 1;
-    private ArrayAdapter<String> mArrayAdapter;
 
-
-    //Check if device has bluetooth then continue to configure
-    if (bluetooth != null) {
+    public void onOff(View v){
+        OptionsFragment options_frag = (OptionsFragment)getFragmentManager().findFragmentByTag("frag_options");
         if (!bluetooth.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-
-            // status van de bluetooth laten zien
-            String status;
-            if (bluetooth.isEnabled()) {
-                String mydeviceadress = bluetooth.getAddress();
-                String mydevicename = bluetooth.getName();
-                status = mydevicename + " : " + mydeviceadress;
-            } else {
-                status = "Bluetooth is not Enabled.";
+            Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(turnOn, 1000);
+            if (local_frag_tag == "Options") {
+                options_frag.onState();
+                showToast("Turned On");
             }
-            Toast.makeText(this, status, Toast.LENGTH_LONG).show();
-        }
-
-        Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
-        //If there are paired devices
-        if (pairedDevices.size() > 0) {
-            // Loop through paired devices
-            for (BluetoothDevice device : pairedDevices) {
-                // Add the name and address to an array adapter to show in a ListView
-               mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+            else {
+                showToast("No options_frag found");
             }
         }
-
-
+        else if (bluetooth.isEnabled()) {
+            bluetooth.disable();
+            if (local_frag_tag == "Options") {
+                options_frag.offState();
+                showToast("Turned off");
+            }
+            else {
+                showToast("No options_frag found");
+            }
+        }
+        else {
+            if (local_frag_tag == "Options") {
+                options_frag.noState();
+                showToast("Bluetooth not Supported");
+            }
+            else {
+                showToast("No options_frag found");
+            }
+        }
     }
 
+    public void listPaired(View v){
+        Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
+        if (pairedDevices == null || pairedDevices.size() == 0) {
+            showToast("No Paired Devices Found");
+        }
+        else {
+            ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
+            btDeviceList.addAll(pairedDevices);
 
-    //TODO Array voor de paired devices aanmaken
+            Intent intent = new Intent(MainActivity.this, DeviceListActivity.class);
+            intent.putParcelableArrayListExtra("device.list", btDeviceList);
+            startActivity(intent);
+        }
+    }
 
+    public void bluetoothSearch (View v) {
+        if(bluetooth.isEnabled()) {
+            bluetooth.startDiscovery();
+        }
+        else {
+            showToast("Bluetooth is not turned on");
+        }
+    }
 
-    // Create a BroadcastReceiver for ACTION_FOUND
+    //Functions that perform when pairing
+    private void pairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("createBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void unpairDevice(BluetoothDevice device) {
+        try {
+            Method method = device.getClass().getMethod("removeBond", (Class[]) null);
+            method.invoke(device, (Object[]) null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //BroadcastReceiver for Discovery
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+
+            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                btDeviceList = new ArrayList<BluetoothDevice>();
+
+                mProgressDlg.show();
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                mProgressDlg.dismiss();
+
+                //Show found Devices
+                Intent foundIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+                foundIntent.putParcelableArrayListExtra("device.list", btDeviceList);
+                startActivity(foundIntent);
+            }
+            else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                btDeviceList.add(device);
+
+                showToast("Found device " + device.getName());
             }
         }
     };
-    // Register the BroadcastReceiver
-    IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-    registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-
-    //TODO Afmaken van connectie
-    //Bluetoothconnectie
-    private Class ConnectThread extends Thread {
-        final BluetoothSocket mmSocket;
-        final BluetoothDevice mmDevice;
 
 
-        public ConnectThread(BluetoothDevice device) {
-            // Use a temporary object that is later assigned to mmSocket,
-            // because mmSocket is final
-            BluetoothSocket tmp = null;
-            mmDevice = device;
-
-            // Get a BluetoothSocket to connect with the given BluetoothDevice
-            try {
-                // uuid is the app's UUID string, also used by the server code
-                //TODO UUID string van Coen vergaren!
-                UUID uuid = UUID.fromString("")
-                tmp = device.createRfcommSocketToServiceRecord(uuid);
-            } catch (IOException e) { }
-            mmSocket = tmp;
-        }
-
-    public void run() {
-        // Cancel discovery because it will slow down the connection
-        bluetooth.cancelDiscovery();
-
-        try {
-            // Connect the device through the socket. This will block
-            // until it succeeds or throws an exception
-            mmSocket.connect();
-        } catch (IOException connectException) {
-            // Unable to connect; close the socket and get out
-            try {
-                mmSocket.close();
-            } catch (IOException closeException) { }
-            return;
-        }
-
-        // Do work to manage the connection (in a separate thread)
-        //manageConnectedSocket(mmSocket);
-    }
-
-    /** Will cancel an in-progress connection, and close the socket
-    public void cancel() {
-        try {
-            mmSocket.close();
-        } catch (IOException e) { }
-    }
-
-    }
-
-    //TODO Managing a Connection */
-
-
-
-
+    //TODO Managing the Connection
 
 
 }

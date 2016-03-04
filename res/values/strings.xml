@@ -6,6 +6,20 @@
     <string name="drawer_open" translatable="false">Slider Menu Opened</string>
     <string name="drawer_close" translatable="false">Slider Menu Closed</string>
 
+    <!-- Bluetooth strings -->
+    <string name="bluetooth_on">Bluetooth is ON</string>
+    <string name="bluetooth_off">Bluetooth is OFF</string>
+
+    <string name="bluetooth_switch_on">Turn ON</string>
+    <string name="bluetooth_switch_off">Turn OFF</string>
+
+    <string name="title_options">Bluetooth Control</string>
+    <string name="text_pair">Pair</string>
+    <string name="text_bt_search">Search for Devices</string>
+    <string name="text_list_devices">List of Devices</string>
+    <string name="text_bt_pdevices">List Paired Devices</string>
+
+
     <!-- Search Function -->
     <string name="search_title">Search</string>
     <string name="search_hint">Zoek Muziek</string>
@@ -14,8 +28,8 @@
     <string-array name="nav_drawer_items">
         <item >Home</item>
         <item >Music</item>
+        <item >Options</item>
         <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
-        <item >Communities</item>
         <item >Pages</item>
         <item >What\'s Hot</item>
     </string-array>
