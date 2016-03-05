@@ -2,13 +2,14 @@ package com.PiProject.Music_App;
 
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.bluetooth.BluetoothSocket;
+import android.content.*;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,13 +17,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.PiProject.Music_App.adapter.DeviceListAdapter;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.UUID;
 
-public class DeviceListActivity extends Activity{
+public class DeviceListActivity extends Activity {
+    protected static final String TAG = "TAG";
     private ListView mListView;
     private DeviceListAdapter mAdapter;
     private ArrayList<BluetoothDevice> mDeviceList;
+    private BluetoothService mBluetoothService = null;
+    private BluetoothAdapter bluetooth;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,10 +36,12 @@ public class DeviceListActivity extends Activity{
 
         setContentView(R.layout.activity_paired_devices);
 
-        mDeviceList		= getIntent().getExtras().getParcelableArrayList("device.list");
-        mListView		= (ListView) findViewById(R.id.lv_paired);
+        bluetooth = BluetoothAdapter.getDefaultAdapter();
 
-        mAdapter		= new DeviceListAdapter(this);
+        mDeviceList = getIntent().getExtras().getParcelableArrayList("device.list");
+        mListView = (ListView) findViewById(R.id.lv_paired);
+
+        mAdapter = new DeviceListAdapter(this);
         mAdapter.setData(mDeviceList);
         mAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
             @Override
@@ -49,6 +57,16 @@ public class DeviceListActivity extends Activity{
                 }
             }
         });
+
+        mAdapter.setListener(new DeviceListAdapter.OnConnectButtonClickListener() {
+            @Override
+            public void onConnectButtonClick(int position) {
+                BluetoothDevice device = mDeviceList.get(position);
+
+                mBluetoothService.connect(device);
+            }
+        });
+
 
         mListView.setAdapter(mAdapter);
 
@@ -96,12 +114,12 @@ public class DeviceListActivity extends Activity{
             String action = intent.getAction();
 
             if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
-                final int state 		= intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
-                final int prevState	= intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
+                final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
+                final int prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR);
 
                 if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
                     showToast("Paired");
-                } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED){
+                } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
                     showToast("Unpaired");
                 }
 
@@ -109,4 +127,72 @@ public class DeviceListActivity extends Activity{
             }
         }
     };
+
+    //The BluetoothService for connecting
+    public class BluetoothService {
+        //unique UUID for this application
+        private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
+        private ConnectThread mConnectThread;
+        //private ConnectedThread mConnectedThread;
+        private BluetoothAdapter bluetooth;
+
+        public synchronized void connect(BluetoothDevice device) {
+            //start ConnectThread to connect to given device
+            mConnectThread = new ConnectThread(device);
+            mConnectThread.start();
+        }
+        private class ConnectThread extends Thread {
+            private final BluetoothSocket mmSocket;
+            private final BluetoothDevice mmDevice;
+
+            public ConnectThread(BluetoothDevice device) {
+                // Use a temporary object that is later assigned to mmSocket,
+                // because mmSocket is final
+                BluetoothSocket tmp = null;
+                mmDevice = device;
+
+                // Get a BluetoothSocket to connect with the given BluetoothDevice
+                try {
+                    tmp = device.createRfcommSocketToServiceRecord(PI_UUID);
+                } catch (IOException e) { }
+                mmSocket = tmp;
+            }
+
+            public void run() {
+                // Cancel discovery because it will slow down the connection
+                bluetooth.cancelDiscovery();
+
+                try {
+                    // Connect the device through the socket. This will block
+                    // until it succeeds or throws an exception
+                    mmSocket.connect();
+                } catch (IOException connectException) {
+                    Log.d(TAG, "CouldNotConnectToSocket", connectException);
+                    // Unable to connect; close the socket and get out
+                    try {
+                        mmSocket.close();
+                    } catch (IOException closeException) { }
+                    return;
+                }
+
+                //Showing toast for connection status
+                if (mmSocket.isConnected()){
+                    showToast("Connected");
+                }
+                else {
+                    showToast("Could not Connect");
+                }
+
+                // Do work to manage the connection (in a separate thread)
+                //MainActivity.manageConnectedSocket(mmSocket);
+            }
+
+            /** Will cancel an in-progress connection, and close the socket */
+            public  void cancel() {
+                try {
+                    mmSocket.close();
+                } catch (IOException e) { }
+            }
+        }
+    }
 }

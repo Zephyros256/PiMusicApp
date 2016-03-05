@@ -24,6 +24,7 @@ import java.lang.String;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 
 public class MainActivity extends Activity {
@@ -35,6 +36,7 @@ public class MainActivity extends Activity {
 
     //Bluetooth buttons and stuff
     private final static int REQUEST_ENABLE_BT = 1;
+    private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
 
     private Set<BluetoothDevice> pairedDevices;
     private BluetoothAdapter bluetooth;
@@ -42,8 +44,7 @@ public class MainActivity extends Activity {
     private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
     private ProgressDialog mProgressDlg;
 
-    TextView BluetoothListTitle, bluetoothStatus;
-    ListView mBluetoothList;
+    TextView bluetoothStatus, btConnected;
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -69,9 +70,9 @@ public class MainActivity extends Activity {
         // TODO checken welke elementen behouden kunnen worden en welke niet a.d.h.v. de aan/uit dingen van OptionsFragment
 
         bluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
-        BluetoothListTitle = (TextView)findViewById(R.id.listTitle);
-        mBluetoothList = (ListView)findViewById(R.id.bluetoothList);
+        btConnected = (TextView)findViewById(R.id.connectedTitle);
         bluetooth = BluetoothAdapter.getDefaultAdapter();
+
 
         mProgressDlg = new ProgressDialog(this);
         btListAdapter = new DeviceListAdapter(this);

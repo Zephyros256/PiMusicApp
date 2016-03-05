@@ -14,10 +14,15 @@
     <string name="bluetooth_switch_off">Turn OFF</string>
 
     <string name="title_options">Bluetooth Control</string>
-    <string name="text_pair">Pair</string>
     <string name="text_bt_search">Search for Devices</string>
-    <string name="text_list_devices">List of Devices</string>
     <string name="text_bt_pdevices">List Paired Devices</string>
+    <string name="text_bt_connected">Connected with:</string>
+
+
+    <string name="text_bt_pair">Pair</string>
+    <string name="text_bt_connect">Connect</string>
+    <string name="text_list_devices">List of Devices</string>
+
 
 
     <!-- Search Function -->

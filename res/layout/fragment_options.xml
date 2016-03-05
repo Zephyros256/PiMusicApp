@@ -10,7 +10,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:id="@+id/fragmentTitle"
-              android:textSize="35dp"
+              android:textSize="35sp"
               android:layout_alignParentTop="true"
               android:layout_centerHorizontal="true" />
 
@@ -44,7 +44,7 @@
             android:text="@string/bluetooth_off"
             android:textColor="@color/Red"
             android:id="@+id/bluetoothStatus"
-            android:textSize="24dp"
+            android:textSize="24sp"
             android:gravity="center"
             android:layout_toEndOf="@+id/listTitle"
             android:layout_alignTop="@+id/buttonOnOff"
@@ -64,20 +64,12 @@
             android:layout_below="@+id/fragmentTitle"
             android:layout_toRightOf="@+id/Buffer"/>
 
-    <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bluetoothList"
-            android:layout_below="@+id/listTitle"
-            android:layout_alignParentStart="true"/>
-
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/listTitle"
-            android:textColor="#ff34ff06"
-            android:textSize="25dp"
+            android:text="@string/text_bt_connected"
+            android:id="@+id/connectedTitle"
+            android:textSize="24sp"
             android:layout_below="@+id/buttonDevices"
             android:layout_alignParentStart="true"/>
     <TextView

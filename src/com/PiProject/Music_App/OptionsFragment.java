@@ -16,8 +16,7 @@ public class OptionsFragment extends Fragment {
     public OptionsFragment() {}
 
     Button onOffButton,deviceButton, searchButton;
-    TextView BluetoothListTitle, bluetoothStatus;
-    ListView mBluetoothList;
+    TextView bluetoothStatus, btConnected;
 
     private BluetoothAdapter bluetooth;
 
@@ -39,8 +38,7 @@ public class OptionsFragment extends Fragment {
         deviceButton = (Button)optionsRootView.findViewById(R.id.buttonDevices);
         searchButton = (Button)optionsRootView.findViewById(R.id.buttonSearch);
         bluetoothStatus = (TextView)optionsRootView.findViewById(R.id.bluetoothStatus);
-        BluetoothListTitle = (TextView)optionsRootView.findViewById(R.id.listTitle);
-        mBluetoothList = (ListView)optionsRootView.findViewById(R.id.bluetoothList);
+        btConnected = (TextView)optionsRootView.findViewById(R.id.connectedTitle);
 
         if (bluetooth.isEnabled()) {
             onState();
