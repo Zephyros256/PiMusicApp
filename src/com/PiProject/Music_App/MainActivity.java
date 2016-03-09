@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 
     private String local_frag_tag="";
 
-    //Bluetooth buttons and stuff
+    // Bluetooth buttons and stuff
     private final static int REQUEST_ENABLE_BT = 1;
     private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
 
@@ -45,6 +45,12 @@ public class MainActivity extends Activity {
     private ProgressDialog mProgressDlg;
 
     TextView bluetoothStatus, btConnected;
+
+    // Music List
+    private ListView musicListView;
+    private ListAdapter musicListAdapter;
+    //TODO array list en muziek adapter doen
+    private ArrayList musicPiList = new ArrayList();
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -66,7 +72,7 @@ public class MainActivity extends Activity {
 
         mTitle = mDrawerTitle = getTitle();
 
-        //Bluetooth part
+        // Bluetooth part
         // TODO checken welke elementen behouden kunnen worden en welke niet a.d.h.v. de aan/uit dingen van OptionsFragment
 
         bluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
@@ -112,6 +118,17 @@ public class MainActivity extends Activity {
 
         registerReceiver(mReceiver, btSearchFilter);
 
+        // Music List part
+        musicListView = (ListView) findViewById(R.id.music_list);
+        musicListAdapter.setData(musicPiList);
+
+        musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
@@ -124,17 +141,14 @@ public class MainActivity extends Activity {
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
         // adding nav drawer items to array
-        // TODO comments aanpassen naar de functie het element eronder
+        // TODO eventueel items toevoegen
         // Home
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
         // Music
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
+
         // Settings - Bluetooth
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-        // Pages
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
-        // What's hot, We  will add a counter here
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true, "50+"));
 
 
         // Recycle the typed array
@@ -209,8 +223,7 @@ public class MainActivity extends Activity {
     **/
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // display view for selected nav drawer item
             displayView(position);
         }
@@ -333,8 +346,6 @@ public class MainActivity extends Activity {
     /**
      * Bluetooth Connectie e.d.
      */
-
-
     public void onOff(View v){
         OptionsFragment options_frag = (OptionsFragment)getFragmentManager().findFragmentByTag("frag_options");
         if (!bluetooth.isEnabled()) {
@@ -392,6 +403,8 @@ public class MainActivity extends Activity {
             showToast("Bluetooth is not turned on");
         }
     }
+
+
 
     //Functions that perform when pairing
     private void pairDevice(BluetoothDevice device) {

@@ -6,8 +6,9 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- MusicList text -->
-    <dimen name="song_text">16dp</dimen>
-    <dimen name="artist_text">14dp</dimen>
+    <dimen name="ML_song_text">16sp</dimen>
+    <dimen name="ML_artist_text">14sp</dimen>
+    <dimen name="ML_album_text"
 
     <!-- Buttons -->
     <dimen name="bluetooth_button">120dp</dimen>

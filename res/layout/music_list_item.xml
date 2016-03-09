@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:gravity="center"
               android:background="@drawable/music_list_selector"
               android:padding="5dp" android:weightSum="1">
-    <!-- TODO dit voltooien en album_title toevoegen(niet per se hier)
-    TODO text referenties aan geimporteerde muziekgegevens linken-->
+    <!-- TODO text referenties aan geimporteerde muziekgegevens linken-->
     <TextView
-
+            android:id="@+id/musiclist_song_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/song_text"
+            android:textSize="@dimen/ML_song_text"
             android:gravity="start"
-            android:text="song"
-            android:padding="10dp"
+            android:text="Song"
+            android:paddingBottom="5dp"
             android:color="@color/music_list_text" />
+    <!-- TODO artist eventueel veranderen in album -->
     <TextView
-            android:id="@+id/textView"
-            android:layout_width="0dp"
+            android:id="@+id/musiclist_artist_title"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Small Text"
-             android:layout_gravity="center_vertical" android:layout_weight="16.75"/>
+            android:text="Artist"
+            android:paddingBottom="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/musiclist_song_title"/>
 
-</LinearLayout>
+</RelativeLayout>

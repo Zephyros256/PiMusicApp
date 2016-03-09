@@ -30,20 +30,17 @@
     <string name="search_hint">Zoek Muziek</string>
 
     <!-- Nav Drawer Menu Items TODO array items hernoemen naar hun uiteindelijke functie-->
+    <!-- Add -->
     <string-array name="nav_drawer_items">
         <item >Home</item>
         <item >Music</item>
+
         <item >Options</item>
-        <!-- TODO .java en .xml bestanden toevoegen voor elk item/ items indien nodig verwijderen of toevoegen -->
-        <item >Pages</item>
-        <item >What\'s Hot</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons TODO iconen toevoegen -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_placeholder</item>
-        <item>@drawable/ic_placeholder</item>
         <item>@drawable/ic_placeholder</item>
         <item>@drawable/ic_placeholder</item>
         <item>@drawable/ic_placeholder</item>

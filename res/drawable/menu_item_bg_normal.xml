@@ -1,5 +1,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="rectangle">
+    <!-- TODO start, center en endColor aanpassen naar wens -->
     <gradient
             android:startColor="@color/menu_bg_start"
             android:endColor="@color/menu_bg_end"
