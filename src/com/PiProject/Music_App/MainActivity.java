@@ -454,8 +454,17 @@ public class MainActivity extends Activity {
         }
     };
 
+    public class MusicData {
+        // TODO variabelen van de nummers bepalen en contrueren
+        int id;
+        String songName;
+        String songArtist;
+        String songAlbum;
+    }
 
-    //TODO Managing the Connection
+    //TODO Managing the Connection, ziet developer.android pagina
+    private class ConnectedThread extends Thread {
 
+    }
 
 }
