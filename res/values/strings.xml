@@ -38,12 +38,12 @@
         <item >Options</item>
     </string-array>
 
-    <!-- Nav Drawer List Item Icons TODO iconen toevoegen -->
+    <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_placeholder</item>
-        <item>@drawable/ic_placeholder</item>
-        <item>@drawable/ic_placeholder</item>
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_music</item>
+        <item>@drawable/ic_options</item>
     </array>
 
     <!-- Content Description -->
