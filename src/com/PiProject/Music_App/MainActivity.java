@@ -3,11 +3,15 @@ package com.PiProject.Music_App;
 import android.app.*;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -20,8 +24,12 @@ import com.PiProject.Music_App.adapter.DeviceListAdapter;
 import com.PiProject.Music_App.adapter.NavDrawerListAdapter;
 import com.PiProject.Music_App.model.NavDrawerItem;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.String;
 import java.lang.reflect.Method;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -36,13 +44,20 @@ public class MainActivity extends Activity {
 
     // Bluetooth buttons and stuff
     private final static int REQUEST_ENABLE_BT = 1;
+    private static final String BTAG = "BluetoothService";
     private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
 
     private Set<BluetoothDevice> pairedDevices;
     private BluetoothAdapter bluetooth;
+    private BluetoothSocket socket;
     private DeviceListAdapter btListAdapter;
     private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
     private ProgressDialog mProgressDlg;
+    static Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+        }
+    };
 
     TextView bluetoothStatus, btConnected;
 
@@ -76,9 +91,9 @@ public class MainActivity extends Activity {
         // TODO checken welke elementen behouden kunnen worden en welke niet a.d.h.v. de aan/uit dingen van OptionsFragment
 
         bluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
+
         btConnected = (TextView)findViewById(R.id.connectedTitle);
         bluetooth = BluetoothAdapter.getDefaultAdapter();
-
 
         mProgressDlg = new ProgressDialog(this);
         btListAdapter = new DeviceListAdapter(this);
@@ -94,7 +109,7 @@ public class MainActivity extends Activity {
         });
 
         btListAdapter.setData(btDeviceList);
-        btListAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
+        /*btListAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
             @Override
             public void onPairButtonClick(int position) {
                 BluetoothDevice device = btDeviceList.get(position);
@@ -107,14 +122,16 @@ public class MainActivity extends Activity {
                     pairDevice(device);
                 }
             }
-        });
+        });*/
 
         IntentFilter btSearchFilter = new IntentFilter();
 
         btSearchFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        btSearchFilter.addAction(BluetoothDevice.ACTION_FOUND);
         btSearchFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         btSearchFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        btSearchFilter.addAction(BluetoothDevice.ACTION_FOUND);
+        btSearchFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        btSearchFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
 
         registerReceiver(mReceiver, btSearchFilter);
 
@@ -405,8 +422,6 @@ public class MainActivity extends Activity {
         }
     }
 
-
-
     //Functions that perform when pairing
     private void pairDevice(BluetoothDevice device) {
         try {
@@ -452,6 +467,14 @@ public class MainActivity extends Activity {
 
                 showToast("Found device " + device.getName());
             }
+            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                Log.i(BTAG, "Connected to a device");
+                showToast("Connected with " + device.getName());
+                //TODO figure out how to reference connectedthread.run from this static method
+                ConnectedThread.run();
+            }
         }
     };
 
@@ -465,6 +488,56 @@ public class MainActivity extends Activity {
 
     //TODO Managing the Connection, ziet developer.android pagina
     private class ConnectedThread extends Thread {
+        private final BluetoothSocket mSocket;
+        private final InputStream mInStream;
+        private final OutputStream mOutStream;
+
+        public ConnectedThread(BluetoothSocket socket) {
+            mSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams, using temp objects because
+            // member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) { }
+
+            mInStream = tmpIn;
+            mOutStream = tmpOut;
+
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read from the InputStream
+                    bytes = mInStream.read(buffer);
+                    // Send the obtained bytes to the UI activity
+                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                } catch (IOException e) {
+                    break;
+                }
+            }
+        }
+
+        /* Call this from the main activity to send data to the remote device
+        public void write(byte[] bytes) {
+            try {
+                mOutStream.write(bytes);
+            } catch (IOException e) { }
+        }
+
+        public void cancel() {
+            try {
+                mSocket.close();
+            } catch (IOException e) { }*/
+        }
 
     }
 

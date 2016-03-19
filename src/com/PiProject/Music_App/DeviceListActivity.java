@@ -195,6 +195,7 @@ public class DeviceListActivity extends Activity {
                 }
 
                 // Do work to manage the connection (in a separate thread)
+                //TODO referentie naar de manage thread aanmaken
                 //MainActivity.manageConnectedSocket(mmSocket);
             }
 

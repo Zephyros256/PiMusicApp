@@ -146,6 +146,8 @@
 
     <!-- Custom Colours for the navigation bar
     TODO kleuren van dingen naar gelang aanpassen voor gewenste stijl-->
+    <color name="primary">@color/DarkGrey</color>
+    <color name="primary_dark">@color/DimGrey</color>
 
     <!-- Counter colours -->
     <color name="counter_text_color">@color/Black</color>
