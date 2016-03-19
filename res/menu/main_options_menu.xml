@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+    <item
+        android:id="action_settings"
+        android:title="@string/action_settings"
+        android:showAsAction="ifRoom"
+        android:orderInCategory="100"/>
+        -->
+
+    <item
+        android:id="@+id/search"
+        android:title="@string/search_title"
+        android:icon="@drawable/ic_placeholder"
+        android:showAsAction="always"
+        android:actionViewClass="android.widget.SearchView"
+        android:orderInCategory="98"/>
+
+</menu>

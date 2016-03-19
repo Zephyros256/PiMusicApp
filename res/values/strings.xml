@@ -1,4 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyActivity</string>
+    <string name="app_name">Pi Remote</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="drawer_open" translatable="false">Slider Menu Opened</string>
+    <string name="drawer_close" translatable="false">Slider Menu Closed</string>
+
+    <!-- Bluetooth strings -->
+    <string name="bluetooth_on">Bluetooth is ON</string>
+    <string name="bluetooth_off">Bluetooth is OFF</string>
+
+    <string name="bluetooth_switch_on">Turn ON</string>
+    <string name="bluetooth_switch_off">Turn OFF</string>
+
+    <string name="title_options">Bluetooth Control</string>
+    <string name="text_bt_search">Search for Devices</string>
+    <string name="text_bt_pdevices">List Paired Devices</string>
+    <string name="text_bt_connected">Connected with:</string>
+
+
+    <string name="text_bt_pair">Pair</string>
+    <string name="text_bt_connect">Connect</string>
+    <string name="text_list_devices">List of Devices</string>
+
+
+
+    <!-- Search Function -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Zoek Muziek</string>
+
+    <!-- Nav Drawer Menu Items TODO array items hernoemen naar hun uiteindelijke functie-->
+    <!-- Add -->
+    <string-array name="nav_drawer_items">
+        <item >Home</item>
+        <item >Music</item>
+
+        <item >Options</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_music</item>
+        <item>@drawable/ic_options</item>
+    </array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon" translatable="false">Item Icon</string>
+
 </resources>

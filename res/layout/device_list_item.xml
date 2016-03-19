@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+    <Button
+            android:id="@+id/buttonPair"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/text_bt_pair" />
+    <Button
+            android:id="@+id/buttonConnect"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignTop="@+id/buttonPair"
+            android:layout_marginRight="10dp"
+            android:text="@string/text_bt_connect"
+            android:visibility="gone"
+            android:clickable="false"
+            android:layout_toLeftOf="@+id/buttonPair"/>
+
+    <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/buttonConnect"
+            android:layout_alignTop="@+id/buttonPair"
+            android:layout_alignParentLeft="true"
+            android:textSize="16sp"
+            android:textColor="@color/WhiteSmoke"
+            android:text="Sony Xperia" />
+
+    <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/buttonConnect"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/buttonPair"
+            android:text="000000000" />
+
+</RelativeLayout>
