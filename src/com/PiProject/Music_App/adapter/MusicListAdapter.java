@@ -1,6 +1,7 @@
 package com.PiProject.Music_App.adapter;
 
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.PiProject.Music_App.R;
 
+import java.util.List;
+
 public class MusicListAdapter extends BaseAdapter{
     private LayoutInflater mInflater;
     //TODO array van nummer, artiest en identifier
-    //private List<BluetoothDevice> mData;
+    private List<BluetoothDevice> mData;
     private View.OnClickListener mListener;
 
     public MusicListAdapter(Context context) {

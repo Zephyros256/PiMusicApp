@@ -8,7 +8,7 @@
     <!-- MusicList text -->
     <dimen name="ML_song_text">16sp</dimen>
     <dimen name="ML_artist_text">14sp</dimen>
-    <dimen name="ML_album_text"
+    <dimen name="ML_album_text">14sp</dimen>
 
     <!-- Buttons -->
     <dimen name="bluetooth_button">120dp</dimen>

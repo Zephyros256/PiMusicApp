@@ -120,14 +120,16 @@ public class MainActivity extends Activity {
 
         // Music List part
         musicListView = (ListView) findViewById(R.id.music_list);
-        musicListAdapter.setData(musicPiList);
+        //musicListAdapter.setData(musicPiList);
 
+        /*
+        TODO Fix this
         musicListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             }
-        });
+        }); */
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);

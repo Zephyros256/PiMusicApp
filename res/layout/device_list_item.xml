@@ -21,7 +21,8 @@
             android:layout_alignTop="@+id/buttonPair"
             android:layout_marginRight="10dp"
             android:text="@string/text_bt_connect"
-
+            android:visibility="gone"
+            android:clickable="false"
             android:layout_toLeftOf="@+id/buttonPair"/>
 
     <TextView
