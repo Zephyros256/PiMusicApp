@@ -80,6 +80,14 @@
             android:height="60dp"
             android:width="24dp"
             android:elegantTextHeight="false"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/connectedDevice"
+            android:textSize="24sp"
+            android:layout_below="@+id/buttonSearch"
+            android:layout_toEndOf="@+id/Buffer"/>
 
 
 </RelativeLayout>

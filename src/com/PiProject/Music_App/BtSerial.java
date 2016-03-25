@@ -4,6 +4,7 @@ package com.PiProject.Music_App;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.lang.reflect.Method;
@@ -14,6 +15,7 @@ public class BtSerial {
     private Context ctx;
     private BluetoothAdapter bluetooth;
     private BluetoothDevice mDevice;
+    private boolean mcon = MainActivity.connected;
 
     Method btSerialEventMethod;
 

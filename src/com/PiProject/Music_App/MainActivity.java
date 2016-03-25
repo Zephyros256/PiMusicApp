@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements Callback{
 
     Button onOffButton;
 
-    public boolean connected = false;
+    public static boolean connected = false;
 
     private Set<BluetoothDevice> pairedDevices;
     private BluetoothAdapter bluetooth;
@@ -386,6 +386,7 @@ public class MainActivity extends Activity implements Callback{
             bluetooth.disable();
             if (local_frag_tag == "Options") {
                 options_frag.offState();
+                options_frag.disconnected();
                 showToast("Turned off");
             } else {
                 showToast("No options_frag found");
@@ -468,14 +469,19 @@ public class MainActivity extends Activity implements Callback{
             } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-                Log.i(BTAG, "Connected to a device");
+                Log.i(BTAG, "Connected with " + device.getName());
                 showToast("Connected with " + device.getName());
-                //TODO figure out how to reference connectedthread.run from this static method
-                Intent BtSIntent = new Intent(MainActivity.this, BtSerial.class);
+                OptionsFragment options_frag = (OptionsFragment) getFragmentManager().findFragmentByTag("frag_options");
+                options_frag.connected(device.getName());
                 connected = true;
-                BtSIntent.putExtra("Con", connected);
-                startActivity(BtSIntent);
-                mConnectedThread.run();
+                //TODO Fix the error casued by this, see log file
+                //Blijkbaar is de referentie naar de connectedthread verkeerd, fixt 't
+                if (mConnectedThread != null) {
+                    mConnectedThread.start();
+                }
+                else {
+                    Log.i(BTAG, "mConnectedThread = null ");
+                }
             }
         }
     };
@@ -488,8 +494,8 @@ public class MainActivity extends Activity implements Callback{
         String songAlbum;
     }
 
-    //TODO Managing the Connection, ziet developer.android pagina
-    private class ConnectedThread extends Thread {
+    //TODO Managing the Connection, niet perfect werkende in de logs folder
+    public class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private final int mBufferLength;
         protected final InputStream mmInStream;
@@ -502,6 +508,7 @@ public class MainActivity extends Activity implements Callback{
         private int bufferLast;
         private int available;
 
+        //TODO Remove reference and fix the upcoming errors
         private BtSerial mBtSerial;
 
         public ConnectedThread(BluetoothSocket socket, int bufferlength) {

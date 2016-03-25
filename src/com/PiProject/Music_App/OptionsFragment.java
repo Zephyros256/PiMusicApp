@@ -22,7 +22,7 @@ public class OptionsFragment extends Fragment {
     Callback mCallback;
 
     Button onOffButton,deviceButton, searchButton;
-    TextView bluetoothStatus, btConnected;
+    TextView bluetoothStatus, btConnected, btConDevice;
 
     private BluetoothAdapter bluetooth;
 
@@ -66,6 +66,7 @@ public class OptionsFragment extends Fragment {
         searchButton = (Button)optionsRootView.findViewById(R.id.buttonSearch);
         bluetoothStatus = (TextView)optionsRootView.findViewById(R.id.bluetoothStatus);
         btConnected = (TextView)optionsRootView.findViewById(R.id.connectedTitle);
+        btConDevice = (TextView) optionsRootView.findViewById(R.id.connectedDevice);
 
         if (bluetooth.isEnabled()) {
             onState();
@@ -107,6 +108,12 @@ public class OptionsFragment extends Fragment {
         onOffButton.setEnabled(false);
         deviceButton.setEnabled(false);
         searchButton.setEnabled(false);
+    }
+    public void connected(String device) {
+        btConDevice.setText(device);
+    }
+    public void disconnected() {
+        btConDevice.setText("");
     }
 
 }
