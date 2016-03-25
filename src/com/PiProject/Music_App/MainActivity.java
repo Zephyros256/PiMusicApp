@@ -35,17 +35,21 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Callback{
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private String local_frag_tag="";
+    private String local_frag_tag = "";
 
     // Bluetooth buttons and stuff
     private final static int REQUEST_ENABLE_BT = 1;
     private static final String BTAG = "BluetoothService";
     private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
+
+    Button onOffButton;
+
+    public boolean connected = false;
 
     private Set<BluetoothDevice> pairedDevices;
     private BluetoothAdapter bluetooth;
@@ -53,12 +57,14 @@ public class MainActivity extends Activity {
     private DeviceListAdapter btListAdapter;
     private ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
     private ProgressDialog mProgressDlg;
-    static Handler mHandler = new Handler(){
+    //TODO uncomment if needed
+    static Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
         }
     };
 
+    private ConnectedThread mConnectedThread;
     TextView bluetoothStatus, btConnected;
 
     // Music List
@@ -90,9 +96,9 @@ public class MainActivity extends Activity {
         // Bluetooth part
         // TODO checken welke elementen behouden kunnen worden en welke niet a.d.h.v. de aan/uit dingen van OptionsFragment
 
-        bluetoothStatus = (TextView)findViewById(R.id.bluetoothStatus);
-
-        btConnected = (TextView)findViewById(R.id.connectedTitle);
+        bluetoothStatus = (TextView) findViewById(R.id.bluetoothStatus);
+        onOffButton = (Button) findViewById(R.id.buttonOnOff);
+        btConnected = (TextView) findViewById(R.id.connectedTitle);
         bluetooth = BluetoothAdapter.getDefaultAdapter();
 
         mProgressDlg = new ProgressDialog(this);
@@ -109,7 +115,7 @@ public class MainActivity extends Activity {
         });
 
         btListAdapter.setData(btDeviceList);
-        /*btListAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
+        btListAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
             @Override
             public void onPairButtonClick(int position) {
                 BluetoothDevice device = btDeviceList.get(position);
@@ -122,7 +128,7 @@ public class MainActivity extends Activity {
                     pairDevice(device);
                 }
             }
-        });*/
+        });
 
         IntentFilter btSearchFilter = new IntentFilter();
 
@@ -206,7 +212,7 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             // on first time display view for first nav item
             displayView(0);
-            local_frag_tag="Home";
+            local_frag_tag = "Home";
         }
 
     }
@@ -238,7 +244,7 @@ public class MainActivity extends Activity {
 
     /**
      * Slide menu item click listener
-    **/
+     **/
     private class SlideMenuClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -277,7 +283,7 @@ public class MainActivity extends Activity {
 
     /**
      * Diplaying fragment view for selected nav drawer list item
-    **/
+     **/
     private void displayView(int position) {
         // update the menu content by replacing fragments
         Fragment fragment = null;
@@ -294,6 +300,7 @@ public class MainActivity extends Activity {
             case 2:
                 fragment = new OptionsFragment();
                 local_frag_tag = "Options";
+                Log.i(BTAG, "opening options fragment ");
                 break;
             /*
             case 3:
@@ -310,17 +317,15 @@ public class MainActivity extends Activity {
 
         //Fragment constructor with tags created by the switch
         if (fragment != null) {
-            FragmentManager fragManager= getFragmentManager();
-            FragmentTransaction fragTransaction =fragManager.beginTransaction();
+            FragmentManager fragManager = getFragmentManager();
+            FragmentTransaction fragTransaction = fragManager.beginTransaction();
             if (local_frag_tag == "Home") {
                 fragTransaction.replace(R.id.frame_container, fragment, "frag_home");
                 fragTransaction.commit();
-            }
-            else if (local_frag_tag == "MusicList") {
+            } else if (local_frag_tag == "MusicList") {
                 fragTransaction.replace(R.id.frame_container, fragment, "frag_mlist");
                 fragTransaction.commit();
-            }
-            else if (local_frag_tag == "Options") {
+            } else if (local_frag_tag == "Options") {
                 fragTransaction.replace(R.id.frame_container, fragment, "frag_options");
                 fragTransaction.commit();
             }
@@ -364,46 +369,43 @@ public class MainActivity extends Activity {
     /**
      * Bluetooth Connectie e.d.
      */
-    public void onOff(View v){
-        OptionsFragment options_frag = (OptionsFragment)getFragmentManager().findFragmentByTag("frag_options");
+    @Override
+    public void onOffClick() {
+        Log.i(BTAG, "onOff ");
+        OptionsFragment options_frag = (OptionsFragment) getFragmentManager().findFragmentByTag("frag_options");
         if (!bluetooth.isEnabled()) {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, 1000);
             if (local_frag_tag == "Options") {
                 options_frag.onState();
                 showToast("Turned On");
-            }
-            else {
+            } else {
                 showToast("No options_frag found");
             }
-        }
-        else if (bluetooth.isEnabled()) {
+        } else if (bluetooth.isEnabled()) {
             bluetooth.disable();
             if (local_frag_tag == "Options") {
                 options_frag.offState();
                 showToast("Turned off");
-            }
-            else {
+            } else {
                 showToast("No options_frag found");
             }
-        }
-        else {
+        } else {
             if (local_frag_tag == "Options") {
                 options_frag.noState();
                 showToast("Bluetooth not Supported");
-            }
-            else {
+            } else {
                 showToast("No options_frag found");
             }
         }
     }
 
-    public void listPaired(View v){
+    @Override
+    public void listPaired() {
         Set<BluetoothDevice> pairedDevices = bluetooth.getBondedDevices();
         if (pairedDevices == null || pairedDevices.size() == 0) {
             showToast("No Paired Devices Found");
-        }
-        else {
+        } else {
             ArrayList<BluetoothDevice> btDeviceList = new ArrayList<BluetoothDevice>();
             btDeviceList.addAll(pairedDevices);
 
@@ -413,11 +415,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void bluetoothSearch (View v) {
-        if(bluetooth.isEnabled()) {
+    public void bluetoothSearch(View view) {
+        if (bluetooth.isEnabled()) {
             bluetooth.startDiscovery();
-        }
-        else {
+        } else {
             showToast("Bluetooth is not turned on");
         }
     }
@@ -452,28 +453,29 @@ public class MainActivity extends Activity {
                 btDeviceList = new ArrayList<BluetoothDevice>();
 
                 mProgressDlg.show();
-            }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 mProgressDlg.dismiss();
 
                 //Show found Devices
                 Intent foundIntent = new Intent(MainActivity.this, DeviceListActivity.class);
                 foundIntent.putParcelableArrayListExtra("device.list", btDeviceList);
                 startActivity(foundIntent);
-            }
-            else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+            } else if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 btDeviceList.add(device);
 
                 showToast("Found device " + device.getName());
-            }
-            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+            } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                 Log.i(BTAG, "Connected to a device");
                 showToast("Connected with " + device.getName());
                 //TODO figure out how to reference connectedthread.run from this static method
-                ConnectedThread.run();
+                Intent BtSIntent = new Intent(MainActivity.this, BtSerial.class);
+                connected = true;
+                BtSIntent.putExtra("Con", connected);
+                startActivity(BtSIntent);
+                mConnectedThread.run();
             }
         }
     };
@@ -488,57 +490,264 @@ public class MainActivity extends Activity {
 
     //TODO Managing the Connection, ziet developer.android pagina
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mSocket;
-        private final InputStream mInStream;
-        private final OutputStream mOutStream;
+        private final BluetoothSocket mmSocket;
+        private final int mBufferLength;
+        protected final InputStream mmInStream;
+        protected final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket) {
-            mSocket = socket;
+        private int bufferlength = 128;
+        private byte[] rawbuffer;
+        private byte[] buffer;
+        private int bufferIndex;
+        private int bufferLast;
+        private int available;
+
+        private BtSerial mBtSerial;
+
+        public ConnectedThread(BluetoothSocket socket, int bufferlength) {
+
+            mmSocket = socket;
+
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
+            mBufferLength = bufferlength;
 
             // Get the input and output streams, using temp objects because
             // member streams are final
             try {
                 tmpIn = socket.getInputStream();
                 tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
+            } catch (IOException e) {
+            }
 
-            mInStream = tmpIn;
-            mOutStream = tmpOut;
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
 
+            buffer = new byte[mBufferLength]; // buffer store for the stream
+            //Log.i(TAG, "started");
         }
 
+        @Override
         public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes; // bytes returned from read()
+            Log.i(BTAG, "ConnectedThread running");
 
             // Keep listening to the InputStream until an exception occurs
             while (true) {
                 try {
+                    //String outputMessage = mmInStream.available() + " bytes available";
+                    //Log.i(TAG, outputMessage);
                     // Read from the InputStream
-                    bytes = mInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    while (mmInStream.available() > 0) {
+
+                        synchronized (buffer) {
+                            if (bufferLast == buffer.length) {
+                                byte temp[] = new byte[bufferLast << 1];
+                                System.arraycopy(buffer, 0, temp, 0, bufferLast);
+                                buffer = temp;
+                            }
+                            buffer[bufferLast++] = (byte) mmInStream.read();
+                        }
+                        btSerialEvent();
+                    }
                 } catch (IOException e) {
+                    Log.e(BTAG, e.getMessage());
                     break;
                 }
             }
         }
 
-        /* Call this from the main activity to send data to the remote device
-        public void write(byte[] bytes) {
-            try {
-                mOutStream.write(bytes);
-            } catch (IOException e) { }
+        public void btSerialEvent() {
+            mBtSerial.btSerialEvent();
+            Log.i(BTAG, "btSerialEvent called from ConnectedThread");
         }
 
-        public void cancel() {
+        /* Call this from the main Activity to send data to the remote device */
+        public void write(byte[] bytes) {
             try {
-                mSocket.close();
-            } catch (IOException e) { }*/
+                for(int i=0; i<bytes.length; i++) {
+                    mmOutStream.write(bytes[i] & 0xFF);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        /**
+         * Returns the next byte in the buffer as an int (0-255);
+         *
+         * @return int value of the next byte in the buffer
+         */
+        public int read() {
+            Log.i(BTAG, "reading the buffer");
+            if (bufferIndex == bufferLast)
+                return -1;
+
+            synchronized (buffer) {
+                int outgoing = buffer[bufferIndex++] & 0xff;
+                if (bufferIndex == bufferLast) { // rewind
+                    bufferIndex = 0;
+                    bufferLast = 0;
+                }
+                return outgoing;
+            }
+        }
+
+        /**
+         * Returns the whole byte buffer.
+         *
+         * @return
+         */
+        public byte[] readBytes() {
+            Log.i(BTAG, "reading the whole buffer");
+            if (bufferIndex == bufferLast)
+                return null;
+
+            synchronized (buffer) {
+                int length = bufferLast - bufferIndex;
+                byte outgoing[] = new byte[length];
+                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+
+                bufferIndex = 0; // rewind
+                bufferLast = 0;
+                return outgoing;
+            }
+        }
+
+        /**
+         * Returns the available number of bytes in the buffer, and copies the
+         * buffer contents to the passed byte[]
+         *
+         * @return
+         */
+        public int readBytes(byte outgoing[]) {
+            Log.i(BTAG, "determining the total number of bytes");
+            if (bufferIndex == bufferLast)
+                return 0;
+
+            synchronized (buffer) {
+                int length = bufferLast - bufferIndex;
+                if (length > outgoing.length)
+                    length = outgoing.length;
+                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+
+                bufferIndex += length;
+                if (bufferIndex == bufferLast) {
+                    bufferIndex = 0; // rewind
+                    bufferLast = 0;
+                }
+                return length;
+            }
+        }
+
+        /**
+         * Returns a byte buffer until the byte interesting. If the byte interesting
+         * doesn't exist in the current buffer, null is returned.
+         *
+         * @param interesting
+         * @return
+         */
+        public byte[] readBytesUntil(int interesting) {
+            Log.i(BTAG, "reading until interesting byte");
+            if (bufferIndex == bufferLast)
+                return null;
+            byte what = (byte) interesting;
+
+            synchronized (buffer) {
+                int found = -1;
+                for (int k = bufferIndex; k < bufferLast; k++) {
+                    if (buffer[k] == what) {
+                        found = k;
+                        break;
+                    }
+                }
+                if (found == -1)
+                    return null;
+
+                int length = found - bufferIndex + 1;
+                byte outgoing[] = new byte[length];
+                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
+
+                bufferIndex += length;
+                if (bufferIndex == bufferLast) {
+                    bufferIndex = 0; // rewind
+                    bufferLast = 0;
+                }
+                return outgoing;
+            }
+        }
+
+        public int buffer(int bytes) {
+            bufferlength = bytes;
+
+            buffer = new byte[bytes];
+            rawbuffer = buffer.clone();
+
+            return bytes;
+        }
+
+        /**
+         * Returns the last byte in the buffer.
+         *
+         * @return
+         */
+        public int last() {
+            Log.i(BTAG, "returning last byte in buffer");
+            if (bufferIndex == bufferLast)
+                return -1;
+            synchronized (buffer) {
+                int outgoing = buffer[bufferLast - 1];
+                bufferIndex = 0;
+                bufferLast = 0;
+                return outgoing;
+            }
+        }
+
+        /**
+         * Reads a byte from the buffer as char.
+         *
+         * @return
+         */
+        public char readChar() {
+            Log.i(BTAG, "reading byte as char");
+            if (bufferIndex == bufferLast)
+                return (char) (-1);
+            return (char) last();
+        }
+
+        /**
+         * Returns the last byte in the buffer as char.
+         *
+         * @return
+         */
+        public char lastChar() {
+            Log.i(BTAG, "returning last byte as char");
+            if (bufferIndex == bufferLast)
+                return (char) (-1);
+            return (char) last();
+        }
+
+        public int available() {
+            return (bufferLast - bufferIndex);
+        }
+
+        /**
+         * Ignore all the bytes read so far and empty the buffer.
+         */
+        public void clear() {
+            Log.i(BTAG, "clearing the buffer");
+            bufferLast = 0;
+            bufferIndex = 0;
+        }
+
+        /* Call this from the main Activity to shutdown the connection */
+        public void cancel() {
+            Log.i(BTAG, "closing the connection");
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
-
 }
