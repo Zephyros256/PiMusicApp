@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements Callback{
     private String local_frag_tag = "";
 
     // Bluetooth buttons and stuff
+    private UUID uuid = UUID.randomUUID();
     private final static int REQUEST_ENABLE_BT = 1;
     private static final String BTAG = "BluetoothService";
     private final UUID PI_UUID = UUID.fromString("00001800-0000-1000-8000-00805f9b34fb");
@@ -416,7 +417,8 @@ public class MainActivity extends Activity implements Callback{
         }
     }
 
-    public void bluetoothSearch(View view) {
+    @Override
+    public void bluetoothSearch() {
         if (bluetooth.isEnabled()) {
             bluetooth.startDiscovery();
         } else {
@@ -468,19 +470,21 @@ public class MainActivity extends Activity implements Callback{
                 showToast("Found device " + device.getName());
             } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                 BluetoothDevice device = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
                 Log.i(BTAG, "Connected with " + device.getName());
                 showToast("Connected with " + device.getName());
                 OptionsFragment options_frag = (OptionsFragment) getFragmentManager().findFragmentByTag("frag_options");
                 options_frag.connected(device.getName());
                 connected = true;
-                //TODO Fix the error casued by this, see log file
+
+                //TODO nieuwe connectedthread starten met de gekregen socket, zoeken naar hoe een socket te verkrijgen.
                 //Blijkbaar is de referentie naar de connectedthread verkeerd, fixt 't
-                if (mConnectedThread != null) {
-                    mConnectedThread.start();
-                }
-                else {
-                    Log.i(BTAG, "mConnectedThread = null ");
+
+                if (mConnectedThread == null) {
+                    try {
+                        mConnectedThread = new ConnectedThread(device.createRfcommSocketToServiceRecord(uuid), 128);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -568,193 +572,7 @@ public class MainActivity extends Activity implements Callback{
             Log.i(BTAG, "btSerialEvent called from ConnectedThread");
         }
 
-        /* Call this from the main Activity to send data to the remote device */
-        public void write(byte[] bytes) {
-            try {
-                for(int i=0; i<bytes.length; i++) {
-                    mmOutStream.write(bytes[i] & 0xFF);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
-        /**
-         * Returns the next byte in the buffer as an int (0-255);
-         *
-         * @return int value of the next byte in the buffer
-         */
-        public int read() {
-            Log.i(BTAG, "reading the buffer");
-            if (bufferIndex == bufferLast)
-                return -1;
-
-            synchronized (buffer) {
-                int outgoing = buffer[bufferIndex++] & 0xff;
-                if (bufferIndex == bufferLast) { // rewind
-                    bufferIndex = 0;
-                    bufferLast = 0;
-                }
-                return outgoing;
-            }
-        }
-
-        /**
-         * Returns the whole byte buffer.
-         *
-         * @return
-         */
-        public byte[] readBytes() {
-            Log.i(BTAG, "reading the whole buffer");
-            if (bufferIndex == bufferLast)
-                return null;
-
-            synchronized (buffer) {
-                int length = bufferLast - bufferIndex;
-                byte outgoing[] = new byte[length];
-                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
-
-                bufferIndex = 0; // rewind
-                bufferLast = 0;
-                return outgoing;
-            }
-        }
-
-        /**
-         * Returns the available number of bytes in the buffer, and copies the
-         * buffer contents to the passed byte[]
-         *
-         * @return
-         */
-        public int readBytes(byte outgoing[]) {
-            Log.i(BTAG, "determining the total number of bytes");
-            if (bufferIndex == bufferLast)
-                return 0;
-
-            synchronized (buffer) {
-                int length = bufferLast - bufferIndex;
-                if (length > outgoing.length)
-                    length = outgoing.length;
-                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
-
-                bufferIndex += length;
-                if (bufferIndex == bufferLast) {
-                    bufferIndex = 0; // rewind
-                    bufferLast = 0;
-                }
-                return length;
-            }
-        }
-
-        /**
-         * Returns a byte buffer until the byte interesting. If the byte interesting
-         * doesn't exist in the current buffer, null is returned.
-         *
-         * @param interesting
-         * @return
-         */
-        public byte[] readBytesUntil(int interesting) {
-            Log.i(BTAG, "reading until interesting byte");
-            if (bufferIndex == bufferLast)
-                return null;
-            byte what = (byte) interesting;
-
-            synchronized (buffer) {
-                int found = -1;
-                for (int k = bufferIndex; k < bufferLast; k++) {
-                    if (buffer[k] == what) {
-                        found = k;
-                        break;
-                    }
-                }
-                if (found == -1)
-                    return null;
-
-                int length = found - bufferIndex + 1;
-                byte outgoing[] = new byte[length];
-                System.arraycopy(buffer, bufferIndex, outgoing, 0, length);
-
-                bufferIndex += length;
-                if (bufferIndex == bufferLast) {
-                    bufferIndex = 0; // rewind
-                    bufferLast = 0;
-                }
-                return outgoing;
-            }
-        }
-
-        public int buffer(int bytes) {
-            bufferlength = bytes;
-
-            buffer = new byte[bytes];
-            rawbuffer = buffer.clone();
-
-            return bytes;
-        }
-
-        /**
-         * Returns the last byte in the buffer.
-         *
-         * @return
-         */
-        public int last() {
-            Log.i(BTAG, "returning last byte in buffer");
-            if (bufferIndex == bufferLast)
-                return -1;
-            synchronized (buffer) {
-                int outgoing = buffer[bufferLast - 1];
-                bufferIndex = 0;
-                bufferLast = 0;
-                return outgoing;
-            }
-        }
-
-        /**
-         * Reads a byte from the buffer as char.
-         *
-         * @return
-         */
-        public char readChar() {
-            Log.i(BTAG, "reading byte as char");
-            if (bufferIndex == bufferLast)
-                return (char) (-1);
-            return (char) last();
-        }
-
-        /**
-         * Returns the last byte in the buffer as char.
-         *
-         * @return
-         */
-        public char lastChar() {
-            Log.i(BTAG, "returning last byte as char");
-            if (bufferIndex == bufferLast)
-                return (char) (-1);
-            return (char) last();
-        }
-
-        public int available() {
-            return (bufferLast - bufferIndex);
-        }
-
-        /**
-         * Ignore all the bytes read so far and empty the buffer.
-         */
-        public void clear() {
-            Log.i(BTAG, "clearing the buffer");
-            bufferLast = 0;
-            bufferIndex = 0;
-        }
-
-        /* Call this from the main Activity to shutdown the connection */
-        public void cancel() {
-            Log.i(BTAG, "closing the connection");
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
     }
 }

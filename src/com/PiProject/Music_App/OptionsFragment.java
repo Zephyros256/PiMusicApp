@@ -64,6 +64,12 @@ public class OptionsFragment extends Fragment {
             }
         });
         searchButton = (Button)optionsRootView.findViewById(R.id.buttonSearch);
+        searchButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.bluetoothSearch();
+            }
+        });
         bluetoothStatus = (TextView)optionsRootView.findViewById(R.id.bluetoothStatus);
         btConnected = (TextView)optionsRootView.findViewById(R.id.connectedTitle);
         btConDevice = (TextView) optionsRootView.findViewById(R.id.connectedDevice);

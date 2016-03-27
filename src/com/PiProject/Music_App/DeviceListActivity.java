@@ -38,37 +38,42 @@ public class DeviceListActivity extends Activity {
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
 
-        mDeviceList = getIntent().getExtras().getParcelableArrayList("device.list");
-        mListView = (ListView) findViewById(R.id.lv_paired);
+        Bundle extras = getIntent().getExtras();
+        if (null != extras) {
+            mDeviceList = extras.getParcelableArrayList("device.list");
+            mAdapter = new DeviceListAdapter(this);
+            mAdapter.setData(mDeviceList);
+            mAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
+                @Override
+                public void onPairButtonClick(int position) {
+                    BluetoothDevice device = mDeviceList.get(position);
 
-        mAdapter = new DeviceListAdapter(this);
-        mAdapter.setData(mDeviceList);
-        mAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
-            @Override
-            public void onPairButtonClick(int position) {
-                BluetoothDevice device = mDeviceList.get(position);
+                    if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        unpairDevice(device);
+                    } else {
+                        showToast("Pairing...");
 
-                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    unpairDevice(device);
-                } else {
-                    showToast("Pairing...");
-
-                    pairDevice(device);
+                        pairDevice(device);
+                    }
                 }
-            }
-        });
+            });
 
-        mAdapter.setListener(new DeviceListAdapter.OnConnectButtonClickListener() {
-            @Override
-            public void onConnectButtonClick(int position) {
-                BluetoothDevice device = mDeviceList.get(position);
-
-                mBluetoothService.connect(device);
-            }
-        });
+            mListView = (ListView) findViewById(R.id.lv_paired);
 
 
-        mListView.setAdapter(mAdapter);
+
+            mAdapter.setListener(new DeviceListAdapter.OnConnectButtonClickListener() {
+                @Override
+                public void onConnectButtonClick(int position) {
+                    BluetoothDevice device = mDeviceList.get(position);
+
+                    mBluetoothService.connect(device);
+                }
+            });
+
+
+            mListView.setAdapter(mAdapter);
+        }
 
         registerReceiver(mPairReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
 
