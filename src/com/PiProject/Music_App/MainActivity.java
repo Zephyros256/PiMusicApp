@@ -72,7 +72,9 @@ public class MainActivity extends Activity implements Callback{
     private ListView musicListView;
     private ListAdapter musicListAdapter;
     //TODO array list en muziek adapter doen
-    private ArrayList musicPiList = new ArrayList();
+    private ArrayList<String> Song;
+    private ArrayList<String> Album;
+    private ArrayList<String> Artist;
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -144,7 +146,7 @@ public class MainActivity extends Activity implements Callback{
 
         // Music List part
         musicListView = (ListView) findViewById(R.id.music_list);
-        //musicListAdapter.setData(musicPiList);
+
 
         /*
         TODO Fix this
@@ -365,6 +367,16 @@ public class MainActivity extends Activity implements Callback{
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    /**
+     * Music List Functions e.d.
+     */
+    private void addItem() {
+        //TODO bij het ontvangen van data het toevoegen aan de arrays
+        /*Song.add();
+        Album.add();
+        Artist.add();*/
     }
 
     /**

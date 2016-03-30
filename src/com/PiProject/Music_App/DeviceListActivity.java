@@ -77,6 +77,7 @@ public class DeviceListActivity extends Activity {
 
         registerReceiver(mPairReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
 
+        //TODO ervoor zorgen dat adequaat terug gegaan kan worden naar het vorige scherm
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
