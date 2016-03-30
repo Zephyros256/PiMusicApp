@@ -3,6 +3,7 @@
     <!-- TODO start, center en endColor aanpassen naar wens -->
     <gradient
             android:startColor="@color/menu_bg_start"
-            android:endColor="@color/menu_bg_end"
+            android:centerColor="@color/menu_bg_end"
+            android:endColor="@color/menu_bg_start"
             android:angle="90" />
 </shape>
