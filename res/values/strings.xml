@@ -35,7 +35,6 @@
     <string-array name="nav_drawer_items">
         <item >Home</item>
         <item >Music</item>
-
         <item >Options</item>
     </string-array>
 

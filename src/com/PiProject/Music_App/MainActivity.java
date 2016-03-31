@@ -1,9 +1,7 @@
 package com.PiProject.Music_App;
 
 import android.app.*;
-
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.*;
@@ -27,9 +25,7 @@ import com.PiProject.Music_App.model.NavDrawerItem;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.String;
 import java.lang.reflect.Method;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;

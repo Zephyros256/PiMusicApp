@@ -151,7 +151,8 @@
     <color name="Black">#000000</color>
 
     <!-- Transparant Colours -->
-    <color name="T25Black">#40000000</color>
+    <color name="T20Black">#33000000</color>
+    <color name="T20Red">#33FF0000</color>
 
     <!-- Custom Colours for the navigation bar
     TODO kleuren van dingen naar gelang aanpassen voor gewenste stijl-->
@@ -168,11 +169,11 @@
     <color name="counter_text_bg">@color/LightGrey</color>
 
     <!-- Menu colours -->
-    <color name="menu_bg">@color/T25Black</color>
-    <color name="menu_bg_start">@color/DarkDimGrey</color>
-    <color name="menu_bg_end">@color/Black</color>
+    <color name="menu_bg">@color/T20Black</color>
+    <color name="menu_bg_start">@color/Black</color>
+    <color name="menu_bg_end">@color/T20Black</color>
     <color name="menu_bg_pressed_start">@color/DarkRed</color>
-    <color name="menu_bg_pressed_end">@color/Red</color>
+    <color name="menu_bg_pressed_end">@color/T20Red</color>
     <color name="menu_item_title">@color/White</color>
     <color name="menu_divider">@color/DarkGrey</color>
 
