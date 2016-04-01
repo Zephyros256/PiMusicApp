@@ -5,7 +5,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <!-- MusicList text -->
+    <!--Text Sizes -->
+    <dimen name="home_text">50sp</dimen>
+
     <dimen name="ML_song_text">16sp</dimen>
     <dimen name="ML_artist_text">14sp</dimen>
     <dimen name="ML_album_text">14sp</dimen>

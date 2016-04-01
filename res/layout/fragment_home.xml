@@ -6,21 +6,21 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/main_bg">
 
+    <!-- TODO Setting a typeface? -->
     <TextView
-            android:id="@+id/txtLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="16sp"
-            android:text="Home View"/>
-
-    <!-- TODO icoon toevoegen -->
-    <ImageView android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_below="@id/txtLabel"
-               android:src="@drawable/ic_placeholder"
-               android:layout_centerHorizontal="true"
-               android:layout_marginTop="10dp"/>
-
-
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:textSize="@dimen/home_text"
+            android:textColor="@color/home_step_list"
+            android:text="@string/home_screen_text"
+            android:id="@+id/mainText"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="37dp"
+            android:lines="3"
+            android:lineSpacingExtra="23dp"
+            android:minHeight="300dp"
+            android:textAlignment="textStart"/>
 </RelativeLayout>

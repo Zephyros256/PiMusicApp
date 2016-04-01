@@ -177,6 +177,9 @@
     <color name="menu_item_title">@color/White</color>
     <color name="menu_divider">@color/DarkGrey</color>
 
+    <!-- Text Colours -->
+    <color name="home_step_list">@color/Grey14</color>
+
     <!-- Music list colours -->
     <color name="music_list_text">@color/LightGrey</color>
 
