@@ -23,4 +23,15 @@
             android:lineSpacingExtra="23dp"
             android:minHeight="300dp"
             android:textAlignment="textStart"/>
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/homeImage"
+            android:src="@drawable/im_regenboog"
+            android:scaleType="fitStart"
+            android:layout_below="@+id/mainText"
+            android:layout_alignStart="@+id/mainText"
+            android:layout_marginTop="16dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignEnd="@+id/mainText"/>
 </RelativeLayout>
