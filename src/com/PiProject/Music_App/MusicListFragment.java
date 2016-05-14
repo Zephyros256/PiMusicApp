@@ -1,6 +1,7 @@
 package com.PiProject.Music_App;
 
 import android.app.Fragment;
+import android.app.ListFragment;
 import android.view.View;
 
 import android.os.Bundle;
@@ -11,7 +12,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
-public class MusicListFragment extends Fragment {
+public class MusicListFragment extends ListFragment {
 
     private ListView mListView;
 

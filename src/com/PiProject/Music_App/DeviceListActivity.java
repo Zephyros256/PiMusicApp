@@ -38,40 +38,46 @@ public class DeviceListActivity extends Activity {
 
         bluetooth = BluetoothAdapter.getDefaultAdapter();
 
-        mDeviceList = getIntent().getExtras().getParcelableArrayList("device.list");
-        mListView = (ListView) findViewById(R.id.lv_paired);
+        Bundle extras = getIntent().getExtras();
+        if (null != extras) {
+            mDeviceList = extras.getParcelableArrayList("device.list");
+            mAdapter = new DeviceListAdapter(this);
+            mAdapter.setData(mDeviceList);
+            mAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
+                @Override
+                public void onPairButtonClick(int position) {
+                    BluetoothDevice device = mDeviceList.get(position);
 
-        mAdapter = new DeviceListAdapter(this);
-        mAdapter.setData(mDeviceList);
-        mAdapter.setListener(new DeviceListAdapter.OnPairButtonClickListener() {
-            @Override
-            public void onPairButtonClick(int position) {
-                BluetoothDevice device = mDeviceList.get(position);
+                    if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        unpairDevice(device);
+                    } else {
+                        showToast("Pairing...");
 
-                if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                    unpairDevice(device);
-                } else {
-                    showToast("Pairing...");
-
-                    pairDevice(device);
+                        pairDevice(device);
+                    }
                 }
-            }
-        });
+            });
 
-        mAdapter.setListener(new DeviceListAdapter.OnConnectButtonClickListener() {
-            @Override
-            public void onConnectButtonClick(int position) {
-                BluetoothDevice device = mDeviceList.get(position);
-
-                mBluetoothService.connect(device);
-            }
-        });
+            mListView = (ListView) findViewById(R.id.lv_paired);
 
 
-        mListView.setAdapter(mAdapter);
+
+            mAdapter.setListener(new DeviceListAdapter.OnConnectButtonClickListener() {
+                @Override
+                public void onConnectButtonClick(int position) {
+                    BluetoothDevice device = mDeviceList.get(position);
+
+                    mBluetoothService.connect(device);
+                }
+            });
+
+
+            mListView.setAdapter(mAdapter);
+        }
 
         registerReceiver(mPairReceiver, new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED));
 
+        //TODO ervoor zorgen dat adequaat terug gegaan kan worden naar het vorige scherm
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
@@ -88,7 +94,7 @@ public class DeviceListActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
-                Intent homeIntent = new Intent(this, DeviceListActivity.class);
+                Intent homeIntent = new Intent(this, MainActivity.class);
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);
         }
@@ -195,6 +201,7 @@ public class DeviceListActivity extends Activity {
                 }
 
                 // Do work to manage the connection (in a separate thread)
+                //TODO referentie naar de manage thread aanmaken
                 //MainActivity.manageConnectedSocket(mmSocket);
             }
 

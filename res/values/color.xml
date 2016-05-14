@@ -20,13 +20,16 @@
     <color name="PeachPuff">#FFDAB9</color>
     <color name="Gold">#FFD700</color>
     <color name="Pink">#FFC0CB</color>
+    <color name="LightPurple" >#FFBE9EED</color>
     <color name="LightPink">#FFB6C1</color>
     <color name="Orange">#FFA500</color>
     <color name="LightSalmon">#FFA07A</color>
     <color name="DarkOrange">#FF8C00</color>
     <color name="Coral">#FF7F50</color>
+    <color name="DarkMediumPurple">#FF6B5BAA</color>
     <color name="HotPink">#FF69B4</color>
     <color name="Tomato">#FF6347</color>
+    <color name="DarkDimGrey">#FF4B4B4B</color>
     <color name="OrangeRed">#FF4500</color>
     <color name="DeepPink">#FF1493</color>
     <color name="Fuchsia">#FF00FF</color>
@@ -92,6 +95,7 @@
     <color name="DarkMagenta">#8B008B</color>
     <color name="DarkRed">#8B0000</color>
     <color name="BlueViolet">#8A2BE2</color>
+    <color name="VividGreen">#87E223</color>
     <color name="LightSkyBlue">#87CEFA</color>
     <color name="SkyBlue">#87CEEB</color>
     <color name="Grey">#808080</color>
@@ -104,6 +108,8 @@
     <color name="MediumSlateBlue">#7B68EE</color>
     <color name="LightSlateGrey">#778899</color>
     <color name="SlateGrey">#708090</color>
+    <color name="LightDimGrey">#727272</color>
+    <color name="VividBlue">#6FAEEE</color>
     <color name="OliveDrab">#6B8E23</color>
     <color name="SlateBlue">#6A5ACD</color>
     <color name="DimGrey">#696969</color>
@@ -144,21 +150,35 @@
     <color name="Grey14">#242424</color>
     <color name="Black">#000000</color>
 
+    <!-- Transparant Colours -->
+    <color name="T20Black">#33000000</color>
+    <color name="T20Red">#33FF0000</color>
+
     <!-- Custom Colours for the navigation bar
     TODO kleuren van dingen naar gelang aanpassen voor gewenste stijl-->
+    <color name="primary">@color/MediumPurple</color>
+    <color name="primary_dark">@color/DarkMediumPurple</color>
+
+    <!-- Screen Colours -->
+    <color name="main_bg_start">@color/VividGreen</color>
+    <color name="main_bg_center">@color/VividBlue</color>
+    <color name="main_bg_end">@color/LightDimGrey</color>
 
     <!-- Counter colours -->
     <color name="counter_text_color">@color/Black</color>
     <color name="counter_text_bg">@color/LightGrey</color>
 
     <!-- Menu colours -->
-    <color name="menu_bg">@color/Black</color>
-    <color name="menu_bg_start">@color/DarkGrey</color>
-    <color name="menu_bg_end">@color/Black</color>
+    <color name="menu_bg">@color/T20Black</color>
+    <color name="menu_bg_start">@color/Black</color>
+    <color name="menu_bg_end">@color/T20Black</color>
     <color name="menu_bg_pressed_start">@color/DarkRed</color>
-    <color name="menu_bg_pressed_end">@color/Red</color>
+    <color name="menu_bg_pressed_end">@color/T20Red</color>
     <color name="menu_item_title">@color/White</color>
     <color name="menu_divider">@color/DarkGrey</color>
+
+    <!-- Text Colours -->
+    <color name="home_step_list">@color/Grey14</color>
 
     <!-- Music list colours -->
     <color name="music_list_text">@color/LightGrey</color>
